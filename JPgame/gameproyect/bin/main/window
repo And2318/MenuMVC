@@ -1,0 +1,85 @@
+package main; // paquete de la ventana
+
+import javax.swing.JFrame; // manipular la ventana y sus componentes
+
+public class Window extends JFrame implements Runnable { 
+    private Canvas canvas = new Canvas();
+    private Thread thread;
+    private boolean running = false; // variable para controlar el estado del hilo
+
+    private BufferStrategy bs; // variable para el buffer de la ventana
+    private Graphics g;
+
+    public Window(){
+        setTitle("Rompe asteroides");// set  el título de la ventana
+        setSize(800, 600);// set el tamaño de la ventana
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// set la operación de cierre de la ventana
+        setResizable(false);// set la ventana no se puede redimensionar
+        setLocationRelativeTo(null);// set la ventana en el centro de la pantalla
+        setVisible(true);// set la ventana visible
+        setFocusable(true);// set la ventana enfocable
+
+        canvas.setPreferredSize(new Dimension(800, 600));// set el tamaño del canvas
+        canvas.setMaximumSize(new Dimension(800, 600));// set el tamaño máximo del canvas
+        canvas.setMinimumSize(new Dimension(800, 600));// set el tamaño mínimo del canvas
+        canvas.setFocusable(true);// set el canvas enfocable
+        
+        
+        add(canvas);// añadir el canvas a la ventana
+
+
+    }
+    public static void main(String[] args) {
+        new Window().star();// crear una nueva ventana
+    }
+
+    private void update(){
+
+    }
+
+    private void draw(){
+        bs = canvas.getBufferStrategy();
+
+        if(bs == null){
+            canvas.createBufferStrategy(3);// crear el buffer de la ventana
+            return;
+        }
+        g = bs.getDrawGraphics();
+        //-------------------------
+
+        g.drawRect(0,0, 800,600);
+
+        //-------------------------
+        g.dispose();
+        bs.show();
+    }
+
+    @Override
+    public void run() {
+        
+        while(running){
+            update();
+            draw();
+
+        }
+        stop();
+    }
+    private void star(){
+        running = true;
+        thread = new Thread(this);
+        thread.start();// iniciar el hilo
+
+    }
+    private void stop(){
+        try {
+            thread.join();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+
+    }
+    private void pause(){
+
+    }
+}
